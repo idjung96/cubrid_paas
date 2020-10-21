@@ -1,0 +1,17 @@
+{% extends 'cubrid_base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h1 class="mt-4">Result of CUBRID HA Builder</h1>
+  <hr class="mt-0 mb-8">
+  <h3> Connection url </h3><BR>
+  <table>
+    <tr><th>Broker</th><th>Connection URL</th></tr>
+    <tr><td>slave-only broker for DBA</td><td> {{ url.dba_so }} </td></tr>
+    <tr><td>read-write broker for DBA</td><td> {{ url.dba_rw }} </td></tr>
+    <tr><td>read-write broker for service</td><td> {{ url.svc_rw }} </td></tr>
+    <tr><td>read-only broker for service</td><td> {{ url.svc_ro }} </td></tr>
+  </table>
+  <a href="">Home</a>
+{% endblock %}
