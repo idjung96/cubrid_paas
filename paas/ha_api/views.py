@@ -58,7 +58,7 @@ def build(request):
     data = dict(svr_list=svr_list)
 
     # todo: Add to codes for handling template & conf file
-    conf_template_file = open(os.path.join('conf_gen', 'conf_template', conf_template_file[req_json['ha_type']]), 'r')
+    conf_template_file = open(os.path.join('conf_template', conf_template_file[req_json['ha_type']]), 'r')
     conf_output = open(os.path.join('tmp', req_json['ha_type']+'.yml'), 'w+')
 
     success = True
@@ -82,10 +82,20 @@ def build(request):
     conf_output.close()
 
     # todo: Add codes for handling result & error
-    os.system('python '+os.path.join('conf_gen', 'get_cub_conf_for_paas.py')+' cubrid1 '+os.path.join('tmp',req_json['ha_type'])+'.yml')
+    os.system('rm -rf '+os.path.join('~', '.ansible', 'files', '*'))
+    os.system('python '+os.path.join('CUBRID_conf_generator', 'get_cub_conf.py')+' cubrid1 '+os.path.join('tmp',req_json['ha_type'])+'.yml')
     os.system('mv '+os.path.join(req_json['cluster_name'], '*')+' '+os.path.join('~', '.ansible', 'files'))
     os.system('rmdir '+req_json['cluster_name'])
 
+    # todo: Add codes for playbook
+    host_file = open('hosts_'+req_json['ha_type'], 'w+')
+    host_file.write('[cubrid]\n')
+    for i in range(0,len(svr_list)):
+        host_file.write(svr_list[i]['name']+'\n')
+    host_file.close()
+    os.system('ansible-playbook -i hosts_'+req_json['ha_type']+' play.yml')
+    os.system('rm hosts_'+req_json['ha_type'])
+    
     if success:
         data['result'] = 'ok'
         data['url'] = url
